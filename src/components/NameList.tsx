@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 const NameList = () => {
   const [names, setName] = useState<string[]>([
@@ -11,7 +11,7 @@ const NameList = () => {
   ]);
 
   const [inputName, setInputName] = useState<string>("");
-
+  const inputRef = useRef<HTMLInputElement>(null)
   function formatName(name: string): string {
     return name
       .trim()
@@ -23,10 +23,11 @@ const NameList = () => {
   function addName(): void {
     if (
       !names.map((n) => formatName(n)).includes(formatName(inputName)) &&
-      !inputName.trim()
+      inputName.trim() !== ""
     ) {
       setName([...names, inputName]);
       setInputName("");
+      inputRef.current?.focus()
     }
   }
 
@@ -38,11 +39,14 @@ const NameList = () => {
         type="text"
         placeholder="Digite um novo nome"
         value={inputName}
+        ref={inputRef}
+        maxLength={5}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           setInputName(e.target.value);
-          console.log(inputName);
         }}
-        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => e.key == "Enter" && addName()}
+        onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) =>
+          e.key == "Enter" && addName()
+        }
       />
       <ul
         className="max-h-1/3 p-2 overflow-auto [&::-webkit-scrollbar]:w-2
@@ -59,7 +63,16 @@ const NameList = () => {
           );
         })}
       </ul>
-      <button className="bg-blue-600 rounded-2xl p-1" onClick={addName}>
+      <button
+        className={`p-1 rounded-b-md transition-colors duration-700
+        ${
+          inputName.trim()
+            ? "bg-blue-500 hover:bg-blue-800 cursor-pointer transition-all"
+            : "bg-neutral-800 cursor-not-allowed"
+        }`}
+        disabled={!inputName.trim()}
+        onClick={addName}
+      >
         Adicionar nome
       </button>
     </div>
