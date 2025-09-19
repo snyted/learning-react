@@ -1,17 +1,12 @@
 import { useRef, useState } from "react";
+import { FiTrash } from "react-icons/fi";
 
 const NameList = () => {
-  const [names, setName] = useState<string[]>([
-    "João",
-    "Maria",
-    "Ana",
-    "Pedro",
-    "Lucas",
-    "Beatriz",
-  ]);
-
+  const [names, setName] = useState<string[]>([]);
+  const [isDuplicateMessage, setIsDuplicateMessage] = useState<boolean>(false);
   const [inputName, setInputName] = useState<string>("");
-  const inputRef = useRef<HTMLInputElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null);
+
   function formatName(name: string): string {
     return name
       .trim()
@@ -21,18 +16,31 @@ const NameList = () => {
   }
 
   function addName(): void {
-    if (
-      !names.map((n) => formatName(n)).includes(formatName(inputName)) &&
-      inputName.trim() !== ""
-    ) {
-      setName([...names, inputName]);
-      setInputName("");
-      inputRef.current?.focus()
-    }
+    if (inputName.trim() === "") return;
+
+    setName((prevNames) => {
+      if (isDuplicate(prevNames, inputName)) {
+        setIsDuplicateMessage(true);
+        return prevNames;
+      }
+      setIsDuplicateMessage(false);
+      return [...prevNames, inputName];
+    });
+
+    setInputName("");
+    inputRef.current?.focus();
+  }
+
+  function isDuplicate(list: string[], name: string): boolean {
+    return list.map(formatName).includes(formatName(name));
+  }
+
+  function removeName(index: number): void {
+    setName((prev) => prev.filter((_, i) => i !== index));
   }
 
   return (
-    <div className="w-full h-full flex flex-col items-center gap-3 justify-center text-center">
+    <div className="w-full h-full flex flex-col items-center gap-3 text-center">
       <h1 className="text-xl">Adicione nomes a lista.</h1>
       <input
         className="w-full max-w-[300px] p-2 h-10 rounded-2xl bg-neutral-800 text-white block"
@@ -40,7 +48,7 @@ const NameList = () => {
         placeholder="Digite um novo nome"
         value={inputName}
         ref={inputRef}
-        maxLength={5}
+        maxLength={10}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           setInputName(e.target.value);
         }}
@@ -48,17 +56,25 @@ const NameList = () => {
           e.key == "Enter" && addName()
         }
       />
-      <ul
-        className="max-h-1/3 p-2 overflow-auto [&::-webkit-scrollbar]:w-2
-  [&::-webkit-scrollbar-track]:rounded-full
-  [&::-webkit-scrollbar-thumb]:bg-gray-300
-  dark:[&::-webkit-scrollbar-track]:bg-black
-  dark:[&::-webkit-scrollbar-thumb]:bg-white"
+      <p
+        className={` text-red-600 transition-all ${
+          isDuplicateMessage ? "block" : "hidden"
+        }`}
       >
+        Esse nome já está na lista.
+      </p>
+      <ul className="flex flex-col">
         {names.map((name, i) => {
           return (
-            <li key={i}>
+            <li key={i} className="flex w-[150px] text-center">
               <span className="font-bold">{i + 1}</span>:{name}
+              <button
+                key={i}
+                onClick={() => removeName(i)}
+                className="ml-auto self-end hover:text-red-600 transition-all duration-300"
+              >
+                <FiTrash />
+              </button>
             </li>
           );
         })}
