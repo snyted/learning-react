@@ -1,11 +1,16 @@
 import { useRef, useState } from "react";
-import { FiTrash } from "react-icons/fi";
+import { NameItem } from "./NameItem";
+import { Warning } from "./Warning";
 
 const NameList = () => {
   const [names, setName] = useState<string[]>([]);
   const [isDuplicateMessage, setIsDuplicateMessage] = useState<boolean>(false);
   const [inputName, setInputName] = useState<string>("");
   const inputRef = useRef<HTMLInputElement>(null);
+
+  const isLimitReached: boolean = names.length >= 5;
+  const isButtonDisable =
+    isLimitReached || !inputName.trim() || isDuplicateMessage;
 
   function formatName(name: string): string {
     return name
@@ -16,9 +21,10 @@ const NameList = () => {
   }
 
   function addName(): void {
-    if (inputName.trim() === "") return;
+    if (isButtonDisable) return;
 
     setName((prevNames) => {
+      isListFull();
       if (isDuplicate(prevNames, inputName)) {
         setIsDuplicateMessage(true);
         return prevNames;
@@ -39,6 +45,15 @@ const NameList = () => {
     setName((prev) => prev.filter((_, i) => i !== index));
   }
 
+  function isListFull(): boolean {
+    const maxNames: number = 5;
+
+    if (names.length >= maxNames) {
+      return true;
+    }
+    return false;
+  }
+
   return (
     <div className="w-full h-full flex flex-col items-center gap-3 text-center">
       <h1 className="text-xl">Adicione nomes a lista.</h1>
@@ -56,37 +71,30 @@ const NameList = () => {
           e.key == "Enter" && addName()
         }
       />
-      <p
+      <Warning
         className={` text-red-600 transition-all ${
           isDuplicateMessage ? "block" : "hidden"
         }`}
-      >
-        Esse nome já está na lista.
-      </p>
-      <ul className="flex flex-col">
-        {names.map((name, i) => {
-          return (
-            <li key={i} className="flex w-[150px] text-center">
-              <span className="font-bold">{i + 1}</span>:{name}
-              <button
-                key={i}
-                onClick={() => removeName(i)}
-                className="ml-auto self-end hover:text-red-600 transition-all duration-300"
-              >
-                <FiTrash />
-              </button>
-            </li>
-          );
-        })}
+        text="Esse nome já foi adicionado."
+      />
+      <Warning
+        className={`text-red-600 ${isLimitReached ? "block" : "hidden"}`}
+        text="Limite de nomes atingido."
+      />
+      <ul>
+        {names.map((name, i) => (
+          <NameItem key={i} index={i} name={name} onRemove={removeName} />
+        ))}
       </ul>
+
       <button
         className={`p-1 rounded-b-md transition-colors duration-700
         ${
-          inputName.trim()
-            ? "bg-blue-500 hover:bg-blue-800 cursor-pointer transition-all"
-            : "bg-neutral-800 cursor-not-allowed"
+          isButtonDisable
+            ? "bg-neutral-800 cursor-not-allowed"
+            : "bg-blue-500 hover:bg-blue-800 cursor-pointer transition-all"
         }`}
-        disabled={!inputName.trim()}
+        disabled={isButtonDisable}
         onClick={addName}
       >
         Adicionar nome
