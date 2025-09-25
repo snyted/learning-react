@@ -31,7 +31,7 @@ const HelloWorld = () => {
       <img
         src={user.userImgUrl}
         alt={"foto de " + user.name}
-        className={`w-${user.imgSize} inline-block ml-1`}
+        className={`w-${user.imgSize} inline-block ml-`}
       />
 
       {/* MyButton é um componente React! */}
