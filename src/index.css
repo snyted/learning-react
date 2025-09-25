@@ -1,6 +1,15 @@
 @import "tailwindcss";
 
-html, body{
-   width: 100vw;
-   height: 100vh;
+html,
+body {
+  width: 100vw;
+  height: 100vh;
+}
+
+.buttonName {
+  background-color: #b9030f;
+}
+
+.buttonName:hover {
+  background-color: #70160e;
 }
