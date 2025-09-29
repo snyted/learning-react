@@ -1,5 +1,5 @@
-interface ITodoItemProps {
-  id: string;
+interface TodoItemProps {
+  id: number;
   label: string;
   complete: boolean;
 
@@ -12,14 +12,13 @@ export const TodoItem = ({
   complete,
   onComplete,
   onRemove,
-}: ITodoItemProps) => {
+}: TodoItemProps) => {
   return (
-    <li key={id}>
+    <li key={id} className={`${complete ? "bg-green-600" : "bg-neutral-400"}`}>
       {label}
-
-      {complete ? "Concluído" : ""}
-
-      <button onClick={onComplete} className="bg-emerald-700 p-2">Concluir</button>
+      <button onClick={onComplete} className="bg-emerald-700 p-2">
+        Concluir
+      </button>
       <button onClick={onRemove} className="bg-red-700 p-2 ml-2">
         Remover
       </button>

@@ -6,7 +6,7 @@ import { NameItem } from "./NameItem";
 import { Warning } from "./Warning";
 
 // Utils
-import { isDuplicate } from "./../../assets/utils/isDuplicate";
+import { isDuplicate } from "../../utils/isDuplicate";
 
 const NameList = () => {
   const [names, setName] = useState<string[]>([]);
