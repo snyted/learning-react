@@ -1,30 +1,25 @@
+// Hooks
 import { useRef, useState } from "react";
+
+// Components
 import { NameItem } from "./NameItem";
 import { Warning } from "./Warning";
+
+// Utils
+import { isDuplicate } from "./../../assets/utils/isDuplicate";
 
 const NameList = () => {
   const [names, setName] = useState<string[]>([]);
   const [isDuplicateMessage, setIsDuplicateMessage] = useState<boolean>(false);
   const [inputName, setInputName] = useState<string>("");
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const isLimitReached: boolean = names.length >= 5;
-  const isButtonDisable =
-    isLimitReached || !inputName.trim() || isDuplicateMessage;
-
-  function formatName(name: string): string {
-    return name
-      .trim()
-      .toLowerCase()
-      .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
-  }
+  const isButtonDisable: boolean = isLimitReached || isDuplicateMessage;
 
   function addName(): void {
-    if (isButtonDisable) return;
-
     setName((prevNames) => {
-      isListFull();
       if (isDuplicate(prevNames, inputName)) {
         setIsDuplicateMessage(true);
         return prevNames;
@@ -37,21 +32,8 @@ const NameList = () => {
     inputRef.current?.focus();
   }
 
-  function isDuplicate(list: string[], name: string): boolean {
-    return list.map(formatName).includes(formatName(name));
-  }
-
   function removeName(index: number): void {
     setName((prev) => prev.filter((_, i) => i !== index));
-  }
-
-  function isListFull(): boolean {
-    const maxNames: number = 5;
-
-    if (names.length >= maxNames) {
-      return true;
-    }
-    return false;
   }
 
   return (
@@ -83,7 +65,7 @@ const NameList = () => {
       />
       <ul>
         {names.map((name, i) => (
-          <NameItem key={i} index={i} name={name} onRemove={removeName} />
+          <NameItem index={i} name={name} onRemove={removeName} />
         ))}
       </ul>
 
