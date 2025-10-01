@@ -13,6 +13,7 @@ export function TodoList() {
     { id: 2, label: "Fazer pilates", complete: false },
     { id: 3, label: "Fazer almoço", complete: false },
     { id: 4, label: "Fazer janta", complete: false },
+    { id: 5, label:  "Comer merda", complete: false},
   ]);
 
   const handleAdd = (value: string) => {
