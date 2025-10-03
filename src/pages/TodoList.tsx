@@ -1,36 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { InputAdd } from "../components/TodoComponents/InputAdd";
 import { TodoItem } from "../components/TodoComponents/TodoItem";
 import { List } from "../components/TodoComponents/List";
-import { TodoAPI } from "../shared/services/api/TodoAPI";
 
-TodoAPI.getAll().then((data) => console.log("APP", data));
+import { TodoAPI, type ITodo } from "../shared/services/api/TodoAPI";
 
 export function TodoList() {
-  const [list, setList] = useState([
-    { id: 1, label: "Fazer café", complete: false },
-    { id: 2, label: "Fazer pilates", complete: false },
-    { id: 3, label: "Fazer almoço", complete: false },
-    { id: 4, label: "Fazer janta", complete: false },
-    { id: 5, label:  "Comer merda", complete: false},
-  ]);
+  const [list, setList] = useState<ITodo[]>([]);
+
+  useEffect(() => {
+    TodoAPI.getAll().then((data) => setList(data));
+  }, []);
 
   const handleAdd = (value: string) => {
-    setList([...list, { id: list.length + 1, complete: false, label: value }]);
+    TodoAPI.create({ label: value, complete: false }).then((data) =>
+      setList([...list, data])
+    );
   };
 
   const handleRemove = (id: number) => {
-    setList([...list.filter((item) => item.id !== id)]);
+    TodoAPI.deleteById(id).then(() => {
+      setList([...list.filter((item) => item.id !== id)]);
+    });
   };
 
   const handleComplete = (id: number) => {
-    setList([
-      ...list.map((item) => ({
-        ...item,
-        complete: item.id === id ? true : item.complete,
-      })),
-    ]);
+    TodoAPI.updateById(id, { complete: true }).then(() => {
+      setList(
+        list.map((item) =>
+          item.id === id ? { ...item, complete: true } : item
+        )
+      );
+    });
   };
   return (
     <div>

@@ -17,9 +17,13 @@ createServer({
       return schema.find("todos", id);
     });
 
-    this.post("/todos/:id", (schema, req) => {
+    this.post("/todos", (schema, req) => {
       const attrs = JSON.parse(req.requestBody);
       const todo = schema.create("todos", attrs);
+
+      const todos = schema.all("todos");
+      localStorage.setItem("MOCK_TODOS", JSON.stringify(todos));
+
       return todo;
     });
 
@@ -30,6 +34,9 @@ createServer({
 
       const todo = schema.find("todos", id);
       todo?.update(newAttrs);
+
+      const todos = schema.all("todos");
+      localStorage.setItem("MOCK_TODOS", JSON.stringify(todos));
       return {};
     });
 
@@ -38,7 +45,22 @@ createServer({
 
       const todo = schema.find("todos", id);
       todo?.destroy();
+
+      const todos = schema.all("todos");
+      localStorage.setItem("MOCK_TODOS", JSON.stringify(todos));
       return {};
+    });
+  },
+
+  seeds(server) {
+    const storedTodos = localStorage.getItem("MOCK_TODOS");
+
+    if (!storedTodos) return;
+
+    const todos = JSON.parse(storedTodos);
+
+    todos.models.forEach((todo: object) => {
+      server.schema.create("todos", todo);
     });
   },
 });
