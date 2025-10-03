@@ -12,14 +12,18 @@ export const InputAdd = (props: InputAddProps) => {
   };
 
   return (
-    <div>
+    <div className="w-full flex gap-10 text-white">
       <input
         value={value}
         onChange={(e) => setValue(e.target.value)}
-        className="bg-neutral-500 border-solid border-1 rounded-md p-1 m-2"
+        className="bg-neutral-200 border-none rounded-md h-11 w-5/6 placeholder:text-neutral-500 p-2 text-black"
+        placeholder="O que você precisa fazer?"
+        type="text"
+        name="todo"
+        id="todo"
       />
 
-      <button onClick={handleAdd} className="p-2 bg-sky-500">
+      <button onClick={handleAdd} className="p-2 bg-linear-to-r from-cyan-500 to-blue-500 cursor-pointer">
         Adicionar
       </button>
     </div>
