@@ -1,10 +1,20 @@
-import "./App.css";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router";
+import "./index.css";
+import { Home } from "./pages/Home";
+import { About } from "./pages/About";
+import { Detail } from "./pages/Detail";
+
 function App() {
   return (
-    <main className="w-dvw h-screen flex justify-center items-center text-white">
-      <section className="bg-neutral-500 rounded-2xl h-3/4 w-4/5 flex flex-col items-center gap-4 p-4">
-      </section>
-    </main>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/sobre" element={<About />} />
+        <Route path="/detalhe/:id" element={<Detail />} />
+
+        <Route path="*" element={<Navigate to={"/"} />} />
+      </Routes>
+    </BrowserRouter>
   );
 }
 
