@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ToggleItem } from "./ToggleItem";
 
 export const VisibilityManager = () => {
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState<boolean>(true);
   return (
     <div>
         <ToggleItem isVisible={isVisible} title="Testando."/>
